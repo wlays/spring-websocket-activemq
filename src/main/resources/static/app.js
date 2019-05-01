@@ -13,7 +13,7 @@ function connect(event) {
         document.querySelector('#welcome-page').classList.add('hidden');
         document.querySelector('#dialogue-page').classList.remove('hidden');
 
-        var socket = new SockJS('/websocketApp');
+        var socket = new SockJS('/sample/websocket');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, connectionSuccess);
@@ -22,7 +22,7 @@ function connect(event) {
 }
 
 function connectionSuccess() {
-    stompClient.subscribe('/topic/javainuse', onMessageReceived);
+    stompClient.subscribe('/topic/one', onMessageReceived);
 
     stompClient.send("/app/chat.newUser", {}, JSON.stringify({
         sender : name,
@@ -49,16 +49,17 @@ function sendMessage(event) {
 }
 
 function onMessageReceived(payload) {
+    console.log(payload.body);
     var message = JSON.parse(payload.body);
 
     var messageElement = document.createElement('li');
 
     if (message.type === 'newUser') {
         messageElement.classList.add('event-data');
-        message.content = message.sender + 'has joined the chat';
+        message.content = message.sender + ' has joined the chat';
     } else if (message.type === 'Leave') {
         messageElement.classList.add('event-data');
-        message.content = message.sender + 'has left the chat';
+        message.content = message.sender + ' has left the chat';
     } else {
         messageElement.classList.add('message-data');
 
